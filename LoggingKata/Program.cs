@@ -2,6 +2,7 @@
 using System.Linq;
 using System.IO;
 using GeoCoordinatePortable;
+using System.Reflection.Emit;
 
 namespace LoggingKata
 {
@@ -12,8 +13,8 @@ namespace LoggingKata
 
         static void Main(string[] args)
         {
-            // TODO:  Find the two Taco Bells that are the furthest from one another.
-            // HINT:  You'll need two nested forloops ---------------------------
+            // TODO:  Find the two Taco Bells that are the furthest from one another.---------DONE
+            // HINT:  You'll need two nested forloops ----------------------------------DONE
 
             logger.LogInfo("Log initialized");
 
@@ -23,23 +24,51 @@ namespace LoggingKata
 
             logger.LogInfo($"Lines: {lines[0]}");
 
-            // Create a new instance of your TacoParser class
+            // Create a new instance of your TacoParser class-----DONE
             var parser = new TacoParser();
 
-            // Grab an IEnumerable of locations using the Select command: var locations = lines.Select(parser.Parse);
+            // Grab an IEnumerable of locations using the Select command: var locations = lines.Select(parser.Parse);-------DONE
             var locations = lines.Select(parser.Parse).ToArray();
 
             // DON'T FORGET TO LOG YOUR STEPS
 
-            // Now that your Parse method is completed, START BELOW ----------
+            // Now that your Parse method is completed, START BELOW ----------DONE
 
-            // TODO: Create two `ITrackable` variables with initial values of `null`. These will be used to store your two taco bells that are the farthest from each other.
-            // Create a `double` variable to store the distance
+            // TODO: Create two `ITrackable` variables with initial values of `null`. These will be used to store your two taco bells that are the farthest from each other.------DONE
+            ITrackable tbell1 = null;
+            ITrackable tbell2 = null;
 
-            // Include the Geolocation toolbox, so you can compare locations: `using GeoCoordinatePortable;`
+            // Create a `double` variable to store the distance--------DONE
+            double tacoBellDistance = 0;
+
+            // Include the Geolocation toolbox, so you can compare locations: `using GeoCoordinatePortable;--------DONE
 
             //HINT NESTED LOOPS SECTION---------------------
             // Do a loop for your locations to grab each location as the origin (perhaps: `locA`)
+            
+            for (int i = 0 ; i < locations.Length; i++)
+            {
+                var locA = locations[i];
+                var corA = new GeoCoordinate();
+                corA.Latitude = locA.Location.Latitude;
+                corA.Longitude = locA.Location.Longitude;
+                for (int j = 0; j < locations.Length; j++)
+                {
+                    var locB = locations[j];
+                    var corB = new GeoCoordinate();
+                    corB.Latitude = locB.Location.Latitude;
+                    corB.Longitude = locB.Location.Longitude;
+
+                    if (corA.GetDistanceTo(corB) > tacoBellDistance)
+                    {
+                        tacoBellDistance = corA.GetDistanceTo(corB);
+                        tbell1 = locA;
+                        tbell2 = locB;
+                    }
+
+                }
+            }
+
 
             // Create a new corA Coordinate with your locA's lat and long
 
@@ -52,7 +81,7 @@ namespace LoggingKata
 
             // Once you've looped through everything, you've found the two Taco Bells farthest away from each other.
 
-
+            Console.WriteLine($"{tbell1.Name} and {tbell2.Name}  are {tacoBellDistance}  meters apart.");
             
         }
     }
